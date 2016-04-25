@@ -1,5 +1,6 @@
 # Arrowfy
 This plugin adds simple solid arrowheads to any line, sized and colored to match path style.
+![Alt text](https://github.com/joclin/arrowfy/blob/master/arrowfy_scrnshot.png)
 
 ## Installation
 Double-click on .sketchplugin file.
