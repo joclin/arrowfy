@@ -1,26 +1,21 @@
 {
     "name" : "Arrowfy",
-    "description" : "Add simple arrowhead to end of path. Matches color and weight.",
+    "description" : "Add simple arrowhead to end of selected paths. Matches color and weight.",
     "author" : "Jocelyn Lin",
-    "identifier" : "com.bohemiancoding.sketch3.arrowfy",
-    "version" : "1.0",
-    "authorEmail" : "",
-
-    "commands" : [
+    "version" : "1.1",
+    "commands": [
 	{
 	    "name" : "Arrowfy",
-	    "identifier" : "arrowfy"
+	    "identifier" : "arrowfy",
+	    "shortcut" : "ctrl a",
 	    "script" : "script.cocoascript",
-	    "handler" : "createArrow",
-	    "shortcut" : "cmd shift a"	    
-	},
+	    "handler" : "createArrow"
+	}
     ],
-    
-    "menu": {
-	"isRoot" : true,
-	"items" : [
-	    "Arrowfy"
-	],
-	"title" : "Arrowfy"
+    "menu" : {
+	"isRoot": true,
+	"items": [
+	    "arrowfy"
+	]
     }
 }
