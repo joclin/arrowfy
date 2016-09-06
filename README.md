@@ -10,4 +10,4 @@ Select one or multiple paths, then hit CTRL-a to add auto-styled
 arrowheads.
 
 ##v1.1
-Update makes this work for Sketch v39. Also fixes shorcut mapping.
+Update makes this work for Sketch v39. Also fixes shortcut mapping.
