@@ -1,4 +1,6 @@
 # Arrowfy
+[![Download from Sketchpacks.com](https://badges.sketchpacks.com/plugins/com.jocelynlin.sketch.arrowfy/version.svg)](https://api.sketchpacks.com/v1/plugins/com.jocelynlin.sketch.arrowfy/download) [![Compatible Sketch Version](https://badges.sketchpacks.com/plugins/com.jocelynlin.sketch.arrowfy/compatibility.svg)](https://sketchpacks.com/joclin/arrowfy)
+
 This plugin adds simple solid arrowheads to any line, sized and colored to match path style.
 ![Alt text](https://github.com/joclin/arrowfy/blob/master/arrowfy_scrnshot.png)
 
