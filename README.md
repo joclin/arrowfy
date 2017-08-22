@@ -11,8 +11,7 @@ Double-click on .sketchplugin file.
 Select one or multiple paths, then hit CTRL-a to add auto-styled
 arrowheads.
 
-## v1.2
-Update makes this work for Sketch v46.2.
-
-## v1.1
-Update makes this work for Sketch v39. Also fixes shortcut mapping.
+## Versions
+- v1.3 - Changes shortcut to Ctrl-Shift-A to avoid new shortcut overlaps
+- v1.2 - Update makes this work for Sketch v46.2.
+- v1.1 - Update makes this work for Sketch v39. Also fixes shortcut mapping.
