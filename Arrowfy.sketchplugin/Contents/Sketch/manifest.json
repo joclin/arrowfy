@@ -2,7 +2,8 @@
     "name" : "Arrowfy",
     "description" : "Add simple arrowhead to end of selected paths. Matches color and weight.",
     "author" : "Jocelyn Lin",
-    "version" : "1.1",
+    "version" : "1.2",
+    "compatibleVersion": "46.2",
     "identifier": "com.jocelynlin.sketch.arrowfy",
     "appcast": "https://api.sketchpacks.com/v1/plugins/com.jocelynlin.sketch.arrowfy/appcast",
     "commands": [

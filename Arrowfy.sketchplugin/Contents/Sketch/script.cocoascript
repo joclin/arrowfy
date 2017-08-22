@@ -1,3 +1,6 @@
+// MIT Open Source License
+// Copyright (c) 2017 Jocelyn Lin
+
 var createArrow = function(context) {
     // endType - which end of path to attach arrowhead
     // 0=begin, 1=end of path, 2=both ends
@@ -10,12 +13,9 @@ var createArrow = function(context) {
     var doc = context.document;
     var selectedLayers = context.selection;
     var selectedCount = selectedLayers.count();
-    var createdArrows = [];
-
     
     var layer;
     var bezier;
-    var headShape;
 
 
     if (selectedCount == 0) {
@@ -40,7 +40,7 @@ var createArrow = function(context) {
 		var step = length/count;
 		
 		//but also make sure a step is at minimum the arrowhead size
-		var lineThickness = layer.style().border().thickness();
+		var lineThickness = layer.style().borders().objectAtIndex(0).thickness();
 		var scale = 1+(lineThickness/5);
 		if (step < (scale*7)) {
 		    step = scale*7;
@@ -60,11 +60,12 @@ var createArrow = function(context) {
 		headPath.lineToPoint(NSMakePoint(0,-7));
 		headPath.closePath();
 	    
-		headShape = MSShapeGroup.shapeWithBezierPath(headPath);
+		var headShape = MSShapeGroup.shapeWithBezierPath(headPath);
 	    
 		//scale to lineweight
 		//TBD: user input
-		var lineThickness = layer.style().border().thickness();
+		var lineThickness = layer.style().borders().objectAtIndex(0).thickness();
+		var scale = 1+(lineThickness/5);
 		headShape.frame().setWidth(Math.floor(headShape.frame().width()*scale));
 		headShape.frame().setHeight(Math.floor(headShape.frame().height()*scale));
 		
@@ -76,36 +77,38 @@ var createArrow = function(context) {
 		headShape.frame().setY(endPoint.y - headShape.frame().height()/2);
 		
 		//color same as line
-		var linecolor = layer.style().border().color();
-		headShape.style().addStylePartOfType(0);
-		headShape.style().fills().firstObject().color = linecolor;
+		var fill = headShape.style().addStylePartOfType(0);
+		fill.setFillType(0);
+		var fills = headShape.style().enabledFills();
+		fills.lastObject().setColor(layer.style().borders().firstObject().color());
 		
-		//add to layer
+		//add to layer and group it with path
+		layer.select_byExpandingSelection(true, false);
 		headShape.setName('Arrowhead');
 		var gr = layer.parentGroup();
-		gr.addLayers([headShape]);
+		gr.addLayers([headShape]);	
+		headShape.select_byExpandingSelection(true, true);
 
-		//group line & arrowhead        
-		var arrowLayers = MSLayerArray.arrayWithLayers([headShape, layer]);
-		var arrowgroup = MSLayerGroup.groupFromLayers(arrowLayers);
+		var groupAction = doc.actionsController().actionForID("MSGroupAction");
+		groupAction.group(nil);
+		gr = layer.parentGroup();
+
+		//name new group
 		if ((layer.name() == 'Line') || (layer.name() == 'Path')) {
-		    arrowgroup.setName('Arrow');
+		    gr.setName('Arrow');
 		} else {
-		    arrowgroup.setName(layer.name());
+		    gr.setName(layer.name());
 		}
 		
-		createdArrows.push(arrowgroup);
-
 	    } else {
 		doc.showMessage('Oops, not a path.');
 	    }
 	    
 	}
 
-	//reselect all of the new arrow layers
-	for (var i=0; i < createdArrows.length; i++) {
-            arrowgroup = createdArrows[i];
-            arrowgroup.select_byExpandingSelection(true, true);
+	//reselect all new groups
+	for (var i = 0; i < selectedCount; i++) {
+            selectedLayers[i].parentGroup().select_byExpandingSelection(true, true);
 	}
 
     }
