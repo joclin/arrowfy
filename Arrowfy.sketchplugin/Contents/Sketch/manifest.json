@@ -4,6 +4,7 @@
     "author" : "Jocelyn Lin",
     "version" : "1.1",
     "identifier": "com.jocelynlin.sketch.arrowfy",
+    "appcast": "https://api.sketchpacks.com/v1/plugins/com.jocelynlin.sketch.arrowfy/appcast",
     "commands": [
 	{
 	    "name" : "Arrowfy",
