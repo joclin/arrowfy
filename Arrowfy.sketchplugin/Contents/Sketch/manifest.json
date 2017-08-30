@@ -1,24 +1,39 @@
 {
     "name" : "Arrowfy",
-    "description" : "Add simple arrowhead to end of selected paths. Matches color and weight.",
+    "description" : "Add simple arrowhead to either end of selected paths. Matches color and weight.",
     "author" : "Jocelyn Lin",
-    "version" : "1.3",
+    "version" : "2.0",
     "compatibleVersion": "46.2",
     "identifier": "com.jocelynlin.sketch.arrowfy",
     "appcast": "https://api.sketchpacks.com/v1/plugins/com.jocelynlin.sketch.arrowfy/appcast",
     "commands": [
 	{
-	    "name" : "Arrowfy",
-	    "identifier" : "arrowfy",
+	    "name" : "End arrow",
+	    "identifier" : "create-arrow",
 	    "shortcut" : "ctrl shift a",
 	    "script" : "script.cocoascript",
 	    "handler" : "createArrow"
+	},
+	{
+	    "name" : "Beginning arrow",
+	    "identifier" : "create-arrow-begin",
+	    "script" : "script.cocoascript",
+	    "handler" : "createArrowBegin"
+	},
+	{
+	    "name" : "Both ends",
+	    "identifier" : "create-arrow-bothends",
+	    "script" : "script.cocoascript",
+	    "handler" : "createArrowBothEnds"
 	}
-    ],
+
+    ],    
     "menu" : {
-	"isRoot": true,
+	"title" : "Arrowfy",
 	"items": [
-	    "arrowfy"
+	    "create-arrow",
+	    "create-arrow-begin",
+	    "create-arrow-bothends"
 	]
     }
 }

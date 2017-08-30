@@ -2,14 +2,26 @@
 // Copyright (c) 2017 Jocelyn Lin
 
 var createArrow = function(context) {
+    createArrowType(context, 0);
+}
+
+var createArrowBegin = function(context) {
+    createArrowType(context, 1);
+}
+
+var createArrowBothEnds = function(context) {
+    createArrowType(context, 2);
+}
+
+function createArrowType(context, endType) {
     // endType - which end of path to attach arrowhead
     // 0=begin, 1=end of path, 2=both ends
     
     // shapeType - what shape arrowhead should be
     // 0=filled triangle
-
-    // TBD pass in scale, allow for different ends for arrowhead
     
+    // TBD pass in scale, allow for different ends for arrowhead
+
     var doc = context.document;
     var selectedLayers = context.selection;
     var selectedCount = selectedLayers.count();
@@ -17,83 +29,31 @@ var createArrow = function(context) {
     var layer;
     var bezier;
 
-
     if (selectedCount == 0) {
 	doc.showMessage('Oops, no selection.');
     } else {
+	//add arrowhead to each path
+	//TBD fix for nested path layers
 	for (var i = 0; i < selectedCount; i++) {
     	    layer = selectedLayers[i];
-	    
+
 	    //check that this layer is a shape
 	    if( layer && layer.isKindOfClass(MSShapeGroup) ){
-	
-		//split line depending on how curvy it is, with at least 2 points
-    		var path = layer.bezierPathWithTransforms();
-		var count = path.elementCount()*2;
-
-		//hacky way of avoiding weirdly angled arrowheads for tight curves
-		//handle spirals by choosing the greater number
-		if (count<50) {
-		    count=50;
-		}
-		var length = path.length();
-		var step = length/count;
-		
-		//but also make sure a step is at minimum the arrowhead size
-		var lineThickness = layer.style().borders().objectAtIndex(0).thickness();
-		var scale = 1+(lineThickness/5);
-		if (step < (scale*7)) {
-		    step = scale*7;
-		}
-	    
-		//choose which endpoint, 0 or length.
-		//defaults to end right now, TBD: allow choice
-		var endPoint = path.pointOnPathAtLength(length);
-		var linePoint = path.pointOnPathAtLength(length-step);
-		var angle = 360/(2*Math.PI) * (Math.atan2(linePoint.y - endPoint.y, linePoint.x - endPoint.x));
-		
-		//0 - triangle as arrowhead
-		//TBD: different shapes
-		var headPath = NSBezierPath.bezierPath();
-		headPath.moveToPoint(NSMakePoint(0,7));
-		headPath.lineToPoint(NSMakePoint(-14,0));
-		headPath.lineToPoint(NSMakePoint(0,-7));
-		headPath.closePath();
-	    
-		var headShape = MSShapeGroup.shapeWithBezierPath(headPath);
-	    
-		//scale to lineweight
-		//TBD: user input
-		var lineThickness = layer.style().borders().objectAtIndex(0).thickness();
-		var scale = 1+(lineThickness/5);
-		headShape.frame().setWidth(Math.floor(headShape.frame().width()*scale));
-		headShape.frame().setHeight(Math.floor(headShape.frame().height()*scale));
-		
-		//rotate
-		headShape.setRotation(-1*angle);
-
-		//move center to endpoint of line
-		headShape.frame().setX(endPoint.x - headShape.frame().width()/2);
-		headShape.frame().setY(endPoint.y - headShape.frame().height()/2);
-		
-		//color same as line
-		var fill = headShape.style().addStylePartOfType(0);
-		fill.setFillType(0);
-		var fills = headShape.style().enabledFills();
-		fills.lastObject().setColor(layer.style().borders().firstObject().color());
-		
-		//add to layer and group it with path
 		layer.select_byExpandingSelection(true, false);
-		headShape.setName('Arrowhead');
-		var gr = layer.parentGroup();
-		gr.addLayers([headShape]);	
-		headShape.select_byExpandingSelection(true, true);
+		//draw at end;		
+		if ((endType == 0) || (endType == 2)) {
+		    addArrowhead(layer, 0);
+		}
+		//draw at beginning;
+		if ((endType == 1) || (endType == 2)) {
+		    addArrowhead(layer, 1);   
+		}
 
+		//group and name new group
 		var groupAction = doc.actionsController().actionForID("MSGroupAction");
 		groupAction.group(nil);
 		gr = layer.parentGroup();
-
-		//name new group
+    
 		if ((layer.name() == 'Line') || (layer.name() == 'Path')) {
 		    gr.setName('Arrow');
 		} else {
@@ -103,7 +63,6 @@ var createArrow = function(context) {
 	    } else {
 		doc.showMessage('Oops, not a path.');
 	    }
-	    
 	}
 
 	//reselect all new groups
@@ -114,3 +73,70 @@ var createArrow = function(context) {
     }
 }
 
+function addArrowhead(layer, endType) {
+    //in: layer - a path shape
+    //in: endType - which end of path to attach arrowhead (0 begin, 1 end)
+    //does: adds arrowhead shape to end of line
+
+    //0 - triangle as arrowhead
+    //TBD: different shapes
+    var headPath = NSBezierPath.bezierPath();
+    headPath.moveToPoint(NSMakePoint(0,7));
+    headPath.lineToPoint(NSMakePoint(-14,0));
+    headPath.lineToPoint(NSMakePoint(0,-7));
+    headPath.closePath();    
+    var headShape = MSShapeGroup.shapeWithBezierPath(headPath);
+
+    //scale to lineweight
+    //TBD: user input
+    var lineThickness = layer.style().borders().objectAtIndex(0).thickness();
+    var scale = 1+(lineThickness/5);
+    headShape.frame().setWidth(Math.floor(headShape.frame().width()*scale));
+    headShape.frame().setHeight(Math.floor(headShape.frame().height()*scale));
+    
+    //color same as line
+    var fill = headShape.style().addStylePartOfType(0);
+    fill.setFillType(0);
+    var fills = headShape.style().enabledFills();
+    fills.lastObject().setColor(layer.style().borders().firstObject().color());
+
+    //split line depending on how curvy it is, with at least 2 points
+    var path = layer.bezierPathWithTransforms();
+    var count = path.elementCount()*2;
+    
+    //hacky way of avoiding weirdly angled arrowheads for tight curves
+    //handle spirals by choosing the greater number
+    if (count<50) {
+	count=50;
+    }
+    var length = path.length();
+    var step = length/count;
+    
+    //but also make sure a step is at minimum the arrowhead size
+    var lineThickness = layer.style().borders().objectAtIndex(0).thickness();
+    var scale = 1+(lineThickness/5);
+    if (step < (scale*7)) {
+	step = scale*7;
+    }
+
+    //choose which endpoint, 0 or length
+    var endPoint = path.pointOnPathAtLength(length);
+    var linePoint = path.pointOnPathAtLength(length-step);
+    if ((endType == 1) || (endType == 2)) {
+	//draw at beginning;
+	endPoint = path.pointOnPathAtLength(0);
+	linePoint = path.pointOnPathAtLength(step);
+    }
+    //rotate
+    var angle = 360/(2*Math.PI) * (Math.atan2(linePoint.y - endPoint.y, linePoint.x - endPoint.x));
+    headShape.setRotation(-1*angle);
+    //move center to endpoint of line
+    headShape.frame().setX(endPoint.x - headShape.frame().width()/2);
+    headShape.frame().setY(endPoint.y - headShape.frame().height()/2);    
+        
+    //add to layer
+    headShape.setName('Arrowhead');
+    var gr = layer.parentGroup();
+    gr.addLayers([headShape]);	
+    headShape.select_byExpandingSelection(true, true);
+}
