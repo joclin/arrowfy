@@ -39,7 +39,7 @@ function createArrowType(context, endType) {
 
 	    //check that this layer is a shape
 	    if( layer && layer.isKindOfClass(MSShapeGroup) ){
-		layer.select_byExpandingSelection(true, false);
+		layer.select_byExtendingSelection(true, false);
 		//draw at end;		
 		if ((endType == 0) || (endType == 2)) {
 		    addArrowhead(layer, 0);
@@ -67,7 +67,7 @@ function createArrowType(context, endType) {
 
 	//reselect all new groups
 	for (var i = 0; i < selectedCount; i++) {
-            selectedLayers[i].parentGroup().select_byExpandingSelection(true, true);
+            selectedLayers[i].parentGroup().select_byExtendingSelection(true, true);
 	}
 
     }
@@ -84,9 +84,10 @@ function addArrowhead(layer, endType) {
     headPath.moveToPoint(NSMakePoint(0,7));
     headPath.lineToPoint(NSMakePoint(-14,0));
     headPath.lineToPoint(NSMakePoint(0,-7));
-    headPath.closePath();    
+    headPath.closePath();
+    headPath = MSPath.pathWithBezierPath(headPath);
     var headShape = MSShapeGroup.shapeWithBezierPath(headPath);
-
+    
     //scale to lineweight
     //TBD: user input
     var lineThickness = layer.style().borders().objectAtIndex(0).thickness();
@@ -101,7 +102,7 @@ function addArrowhead(layer, endType) {
     fills.lastObject().setColor(layer.style().borders().firstObject().color());
 
     //split line depending on how curvy it is, with at least 2 points
-    var path = layer.bezierPathWithTransforms();
+    var path = layer.pathInFrameWithTransforms();
     var count = path.elementCount()*2;
     
     //hacky way of avoiding weirdly angled arrowheads for tight curves
@@ -138,5 +139,5 @@ function addArrowhead(layer, endType) {
     headShape.setName('Arrowhead');
     var gr = layer.parentGroup();
     gr.addLayers([headShape]);	
-    headShape.select_byExpandingSelection(true, true);
+    headShape.select_byExtendingSelection(true, true);
 }
