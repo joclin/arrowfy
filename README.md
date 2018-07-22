@@ -1,5 +1,9 @@
 # Arrowfy
 
+**UPDATE July 21, 2018:** [Sketch v51](https://blog.sketchapp.com/styles-in-libraries-and-fixed-elements-in-prototyping-in-sketch-51-aab4074c3f46) FINALLY fixes the truly awful default arrows that used to come with sketch! Future work on this plugin will likely cease given that there's now a built-in decent arrowhead that will only get better with each later release.
+
+-----------------
+
 This plugin adds simple solid arrowheads to any line, sized and colored to match path style.
 ![Alt text](https://github.com/joclin/arrowfy/blob/master/arrowfy_scrnshot.png)
 
